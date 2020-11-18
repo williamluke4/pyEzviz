@@ -113,7 +113,7 @@ class EzvizCamera(object):
     def move(self, direction, speed=5):
         """Moves the camera."""
         if direction not in ['right','left','down','up']:
-            raise PyEzvizError("Invalid direction: %s ", command)
+            raise EzvizError("Invalid direction: %s ", command)
 
         # launch the start command
         self._client.ptzControl(str(direction).upper(), self._serial, 'START', speed)

@@ -6,7 +6,7 @@ import time
 from fake_useragent import UserAgent
 from uuid import uuid4
 from .camera import EzvizCamera
-# from pyezviz.camera import EzvizCamera
+# from ezviz.camera import EzvizCamera
 
 COOKIE_NAME = "sessionId"
 CAMERA_DEVICE_CATEGORY = "IPC"
@@ -45,7 +45,7 @@ MAX_RETRIES = 3
 
 
 
-class PyEzvizError(Exception):
+class EzvizError(Exception):
     pass
 
 
@@ -80,10 +80,10 @@ class EzvizClient(object):
                                         "customNo": "1000001"},
                                 timeout=self._timeout)
         except OSError:
-            raise PyEzvizError("Can not login to API")
+            raise EzvizError("Can not login to API")
 
         if req.status_code == 400:
-            raise PyEzvizError("Login error: Please check your username/password: %s ", str(req.text))
+            raise EzvizError("Login error: Please check your username/password: %s ", str(req.text))
 
 
         # let's parse the answer, session is in {.."loginSession":{"sessionId":"xxx...}
@@ -96,12 +96,12 @@ class EzvizClient(object):
 
             sessionId = str(response_json["loginSession"]["sessionId"])
             if not sessionId:
-                raise PyEzvizError("Login error: Please check your username/password: %s ", str(req.text))
+                raise EzvizError("Login error: Please check your username/password: %s ", str(req.text))
 
             self._sessionId = sessionId
 
         except (OSError, json.decoder.JSONDecodeError) as e:
-            raise PyEzvizError("Impossible to decode response: \nResponse was: [%s] %s", str(e), str(req.status_code), str(req.text))
+            raise EzvizError("Impossible to decode response: \nResponse was: [%s] %s", str(e), str(req.status_code), str(req.text))
 
 
         return True
@@ -110,10 +110,10 @@ class EzvizClient(object):
         """Get data from pagelist API."""
 
         if max_retries > MAX_RETRIES:
-            raise PyEzvizError("Can't gather proper data. Max retries exceeded.")
+            raise EzvizError("Can't gather proper data. Max retries exceeded.")
 
         if filter == None:
-            raise PyEzvizError("Trying to call get_pagelist without filter")
+            raise EzvizError("Trying to call get_pagelist without filter")
 
         try:
             req = self._session.get(PAGELIST_URL,
@@ -122,7 +122,7 @@ class EzvizClient(object):
                                     timeout=self._timeout)
 
         except OSError as e:
-            raise PyEzvizError("Could not access Ezviz' API: " + str(e))
+            raise EzvizError("Could not access Ezviz' API: " + str(e))
             
         if req.status_code == 401:
         # session is wrong, need to relogin
@@ -131,12 +131,12 @@ class EzvizClient(object):
             return self._get_pagelist(max_retries+1)
 
         if req.text is "":
-            raise PyEzvizError("No data")
+            raise EzvizError("No data")
 
         try:
             json_output = req.json()
         except (OSError, json.decoder.JSONDecodeError) as e:
-            raise PyEzvizError("Impossible to decode response: " + str(e) + "\nResponse was: " + str(req.text))
+            raise EzvizError("Impossible to decode response: " + str(e) + "\nResponse was: " + str(req.text))
 
         if json_key == None:
             json_result = json_output
@@ -144,7 +144,7 @@ class EzvizClient(object):
             json_result = json_output[json_key]
 
         if not json_result:
-            raise PyEzvizError("Impossible to load the devices, here is the returned response: %s ", str(req.text))
+            raise EzvizError("Impossible to load the devices, here is the returned response: %s ", str(req.text))
 
         return json_result
 
@@ -171,10 +171,10 @@ class EzvizClient(object):
 
             response_json = req.json()
             if response_json['resultCode'] != '0':
-                raise PyEzvizError("Could not set the switch, maybe a permission issue ?: Got %s : %s)",str(req.status_code), str(req.text))
+                raise EzvizError("Could not set the switch, maybe a permission issue ?: Got %s : %s)",str(req.status_code), str(req.text))
                 return False
         except OSError as e:
-            raise PyEzvizError("Could not access Ezviz' API: " + str(e))
+            raise EzvizError("Could not access Ezviz' API: " + str(e))
 
         return True
 
@@ -216,12 +216,12 @@ class EzvizClient(object):
     def ptzControl(self, command, serial, action, speed=5, max_retries=0):
         """PTZ Control by API."""
         if max_retries > MAX_RETRIES:
-            raise PyEzvizError("Can't gather proper data. Max retries exceeded.")
+            raise EzvizError("Can't gather proper data. Max retries exceeded.")
 
         if command == None:
-            raise PyEzvizError("Trying to call ptzControl without command")
+            raise EzvizError("Trying to call ptzControl without command")
         if action == None:
-            raise PyEzvizError("Trying to call ptzControl without action")
+            raise EzvizError("Trying to call ptzControl without action")
 
 
         try:
@@ -237,7 +237,7 @@ class EzvizClient(object):
                                     timeout=self._timeout)
 
         except OSError as e:
-            raise PyEzvizError("Could not access Ezviz' API: " + str(e))
+            raise EzvizError("Could not access Ezviz' API: " + str(e))
             
         if req.status_code == 401:
         # session is wrong, need to re-log-in
@@ -257,7 +257,7 @@ class EzvizClient(object):
     def data_report(self, serial, enable=1, max_retries=0):
         """Enable alarm notifications."""
         if max_retries > MAX_RETRIES:
-            raise PyEzvizError("Can't gather proper data. Max retries exceeded.")
+            raise EzvizError("Can't gather proper data. Max retries exceeded.")
 
         # operationType = 2 if disable, and 1 if enable
         operationType = 2 - int(enable)
@@ -280,7 +280,7 @@ class EzvizClient(object):
                                     timeout=self._timeout)
 
         except OSError as e:
-            raise PyEzvizError("Could not access Ezviz' API: " + str(e))
+            raise EzvizError("Could not access Ezviz' API: " + str(e))
             
         if req.status_code == 401:
         # session is wrong, need to re-log-in
@@ -294,10 +294,10 @@ class EzvizClient(object):
     def detection_sensibility(self, serial, sensibility=3, max_retries=0):
         """Enable alarm notifications."""
         if max_retries > MAX_RETRIES:
-            raise PyEzvizError("Can't gather proper data. Max retries exceeded.")
+            raise EzvizError("Can't gather proper data. Max retries exceeded.")
 
         if sensibility not in [0,1,2,3,4,5,6]:
-            raise PyEzvizError("Unproper sensibility (should be within 1 to 6).")
+            raise EzvizError("Unproper sensibility (should be within 1 to 6).")
 
         try:
             req = self._session.post(DETECTION_SENSIBILITY_URL,
@@ -309,7 +309,7 @@ class EzvizClient(object):
                                     timeout=self._timeout)
 
         except OSError as e:
-            raise PyEzvizError("Could not access Ezviz' API: " + str(e))
+            raise EzvizError("Could not access Ezviz' API: " + str(e))
             
         if req.status_code == 401:
         # session is wrong, need to re-log-in
@@ -322,7 +322,7 @@ class EzvizClient(object):
     def get_detection_sensibility(self, serial, max_retries=0):
         """Enable alarm notifications."""
         if max_retries > MAX_RETRIES:
-            raise PyEzvizError("Can't gather proper data. Max retries exceeded.")
+            raise EzvizError("Can't gather proper data. Max retries exceeded.")
 
         try:
             req = self._session.post(DETECTION_SENSIBILITY_GET_URL,
@@ -333,7 +333,7 @@ class EzvizClient(object):
                                     timeout=self._timeout)
 
         except OSError as e:
-            raise PyEzvizError("Could not access Ezviz' API: " + str(e))
+            raise EzvizError("Could not access Ezviz' API: " + str(e))
             
         if req.status_code == 401:
         # session is wrong, need to re-log-in
@@ -341,11 +341,11 @@ class EzvizClient(object):
             logging.info("Got 401, relogging (max retries: %s)",str(max_retries))
             return self.get_detection_sensibility(serial, enable, max_retries+1)
         elif req.status_code != 200:
-            raise PyEzvizError("Could not get detection sensibility: Got %s : %s)",str(req.status_code), str(req.text))
+            raise EzvizError("Could not get detection sensibility: Got %s : %s)",str(req.status_code), str(req.text))
 
         response_json = req.json()
         if response_json['resultCode'] != '0':
-            # raise PyEzvizError("Could not get detection sensibility: Got %s : %s)",str(req.status_code), str(req.text))
+            # raise EzvizError("Could not get detection sensibility: Got %s : %s)",str(req.status_code), str(req.text))
             return 'Unknown'
         else:
             return response_json['algorithmConfig']['algorithmList'][0]['value']
@@ -353,10 +353,10 @@ class EzvizClient(object):
     def alarm_sound(self, serial, soundType, enable=1, max_retries=0):
         """Enable alarm sound by API."""
         if max_retries > MAX_RETRIES:
-            raise PyEzvizError("Can't gather proper data. Max retries exceeded.")
+            raise EzvizError("Can't gather proper data. Max retries exceeded.")
 
         if soundType not in [0,1,2]:
-            raise PyEzvizError("Invalid soundType, should be 0,1,2: " + str(soundType))
+            raise EzvizError("Invalid soundType, should be 0,1,2: " + str(soundType))
 
         try:
             req = self._session.put(DEVICES_URL + serial + API_ENDPOINT_ALARM_SOUND,
@@ -369,7 +369,7 @@ class EzvizClient(object):
                                     timeout=self._timeout)
 
         except OSError as e:
-            raise PyEzvizError("Could not access Ezviz' API: " + str(e))
+            raise EzvizError("Could not access Ezviz' API: " + str(e))
             
         if req.status_code == 401:
         # session is wrong, need to re-log-in

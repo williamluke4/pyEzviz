@@ -4,15 +4,15 @@ import setuptools
 #     long_description = fh.read()
 
 setuptools.setup(
-    name='pyEzviz',
+    name='ezviz',
     version="0.1.5.5",
     license='Apache Software License',
-    author='Pierre Ourdouille',
-    author_email='baqs@users.github.com',
+    author='William Luke',
+    author_email='william@atto-byte.com',
     description='Pilot your Ezviz cameras',
     long_description="Pilot your Ezviz cameras with this module. Please view readme on github",
     url='http://github.com/baqs/pyEzviz/',
-    packages=setuptools.find_packages(include=['pyezviz']),
+    packages=setuptools.find_packages(include=['ezviz']),
     setup_requires=[
         'requests',
         'setuptools'
@@ -20,12 +20,11 @@ setuptools.setup(
     install_requires=[
         'requests',
         'fake_useragent',
-        'uuid',
         'pandas'
     ],
     entry_points={
     'console_scripts': [
-        'pyezviz = pyezviz.__main__:main'
+        'ezviz = ezviz.__main__:main'
     ]
     }
 )

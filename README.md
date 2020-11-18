@@ -1,22 +1,38 @@
 # Ezviz PyPi
 
-[![Build Status](https://travis-ci.org/BaQs/pyEzviz.svg?branch=master)](https://travis-ci.org/BaQs/pyEzviz)
-
 Pilot your Ezviz cameras with this module.
 
 ### Installing
 
-
 ```
-pip install pyezviz
+pip install ezviz
+```
+
+## Usage
+
+```shell
+usage: ezviz [-h] -u USERNAME -p PASSWORD [--debug] {devices,camera} ...
+
+positional arguments:
+  {devices,camera}
+    devices             Play with all devices at once
+    camera              Camera actions
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -u USERNAME, --username USERNAME
+                        Ezviz username
+  -p PASSWORD, --password PASSWORD
+                        Ezviz Password
+  --debug, -d           Print debug messages to stderr
 ```
 
 ## Playing with it
 
 ```
-pyezviz -u em@il -p PASS device -h
+ezviz -u em@il -p PASS device -h
 ...
-pyezviz -u em@il -p PASS --debug devices status
+ezviz -u em@il -p PASS --debug devices status
       serial            name  status  privacy  audio  ir_led  state_led  follow_move  alarm_notify alarm_sound_mod  encrypted       local_ip detection_sensibility
 0  D733333333 C6N(D73333333)       1    False   True    True       True         True         False        Software       True  192.168.2.10                     3
 1  D733333333 C6N(D73333333)       1    False   True    True       True         True         False        Software       True  192.168.2.13                     4
@@ -27,10 +43,11 @@ pyezviz -u em@il -p PASS --debug devices status
 
 ```
 
-
 ## Running the tests
+
 The tox configuration is already included.
 Simply launch:
+
 ```
 $ tox
 ```
@@ -39,11 +56,9 @@ $ tox
 Tests are written in the tests directory.
 tests/data folder contains samples of EzvizLife API for tests purposes.
 
-
 ## Side notes
 
 As there is no official documentation on the API, I had to reverse-engineer what is the one used in the Ezviz IOS APP.
-
 
 ## Contributing
 
@@ -51,7 +66,7 @@ Any contribution is welcome, considering the number of features the API provides
 
 ## Versioning
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/baqs/pyEzviz/tags). 
+We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/williamluke4/ezvizz/tags).
 
 ## Authors
 
@@ -61,9 +76,8 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Acknowledgments
 
-
 ## Changelog
 
-
 ### 0.0.x
+
 Draft versions

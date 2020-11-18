@@ -5,12 +5,12 @@ import logging
 import pandas
 
 
-from pyezviz import EzvizClient, EzvizCamera
+from ezviz import EzvizClient, EzvizCamera
 
 
 def main():
     """Main function"""
-    parser = argparse.ArgumentParser(prog='pyezviz')
+    parser = argparse.ArgumentParser(prog='ezviz')
     parser.add_argument('-u', '--username', required=True, help='Ezviz username')
     parser.add_argument('-p', '--password', required=True, help='Ezviz Password')
     parser.add_argument('--debug', '-d', action='store_true', help='Print debug messages to stderr')
