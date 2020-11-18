@@ -11,7 +11,7 @@ setuptools.setup(
     author_email='william@atto-byte.com',
     description='Pilot your Ezviz cameras',
     long_description="Pilot your Ezviz cameras with this module. Please view readme on github",
-    url='http://github.com/baqs/pyEzviz/',
+    url='http://github.com/williamluke4/pyEzviz/',
     packages=setuptools.find_packages(include=['ezviz']),
     setup_requires=[
         'requests',
